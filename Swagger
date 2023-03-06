@@ -1,0 +1,342 @@
+openapi: 3.0.3
+info:
+  title: Swagger TechnikaIT - OpenAPI 3.0
+  description: |-
+    Магазин комплектующих к ПК TechnikaIT.
+    TechnikaIT Server основан на OpenAPI 3.0 спецификации. 
+
+    Полезные ссылки:
+    - [Репозиторий](https://github.com)
+    - [Исходное определение API для TechnikaIT](https://github.com/)
+  version: 1.0.11
+servers:
+  - url: https://localhost:8000/swagger.io/api/v1
+    description: Development server
+  - url: https://technikaIT.com/swagger.io/api/v1
+    description: Production server
+paths:
+  /categories:
+    get:
+      summary: Метод получения списка категорий
+      tags:
+        - Категории товаров
+      operationId: getAllCategories
+      responses:
+        '200':
+          description: Успешный ответ со списком категорий
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categories"
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /new_products:
+    get:
+      summary: Метод получения списка новых товаров
+      tags:
+        - Новинки
+      operationId: getNewProducts
+      parameters:
+        - name: limit
+          in: query
+          description: Сколько элементов будем возвращать
+          required: true
+          schema:
+              type: integer
+              format: int32
+      responses:
+        '200':
+          description: Успешный ответ со списком новинок
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShortProducts"
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /products/{product_id}:
+    get:
+      summary: Метод получения товара
+      tags:
+        - Товар
+      operationId: getProductById
+      parameters: 
+        - name: product_id
+          in: path
+          required: true
+          description: ID товара
+          schema:
+            type: string
+          example: 15
+      responses:
+        '200':
+          description: Успешный ответ с одним товаром
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /categories/{category_id}:  
+    get:
+      summary: Метод получения списка товаров заданной категории
+      tags:
+        - Категории товаров
+      operationId: getProductsByIdCategory
+      parameters: 
+        - name: category_id
+          in: path
+          required: true
+          description: ID категории
+          schema:
+            type: string
+          example: 15
+      responses:
+        '200':
+          description: Успешный ответ со списком товаров заданной категории
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShortProducts'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /categories/{category_id}/price:  
+    get:
+      summary: Метод получения максимальной и минимальной цены товара заданной категории
+      tags:
+        - Категории товаров
+      operationId: getMinMaxProdByIdCategory
+      parameters: 
+        - name: category_id
+          in: path
+          required: true
+          description: ID категории
+          schema:
+            type: string
+          example: 15
+      responses:
+        '200':
+          description: Успешный ответ  с максимальной и минимальной ценой товара заданной категории
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Price'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+  /categories/{category_id}/manufacturers:  
+    get:
+      summary: Метод получения производителей товара заданной категории
+      tags:
+        - Категории товаров
+      operationId: getManufacturersByIdCategory
+      parameters: 
+        - name: category_id
+          in: path
+          required: true
+          description: ID категории
+          schema:
+            type: string
+          example: 15
+      responses:
+        '200':
+          description: Успешный ответ  с производителями товаров заданной категории
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manufacturers'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    
+              
+components:
+  schemas:
+    # Краткая информация о продукте
+    ShortProduct:
+      type: object
+      required:
+        - image
+        - title
+        - price
+      properties:
+        product_id:
+          type: integer
+          format: int64
+          example: 10
+          description: ID товара
+        image:
+          type: string
+          example: /img/Aerocool_VX_PLUS_500W.png
+          description: Ссылка на основную картинку
+        title:
+          type: string
+          example: Aerocool VX PLUS 500W
+          description: Название товара
+        price:
+          type: integer
+          format: int64
+          example: 2290
+          description: Цена товара
+    # Список_новинок
+    ShortProducts:
+      type: array
+      items:
+        $ref: "#/components/schemas/ShortProduct"
+        
+    # Продукт
+    Product:
+      type: object
+      required:
+        - image
+        - category
+        - manufacturer
+        - title
+        - description
+        - price
+        - number_of_available
+      properties:
+        product_id:
+          type: integer
+          format: int64
+          example: 10
+          description: ID товара
+        image:
+          type: string
+          example: /img/product/Aerocool_VX_PLUS_500W.png
+          description: Ссылка на основную картинку
+        category:
+          type: string
+          example: Блоки питания
+          description: Категория
+        manufacturer:
+          type: string
+          example: Aerocool
+          description: Название производителя
+        title:
+          type: string
+          example: Aerocool VX PLUS 500W
+          description: Название товара
+        description:
+          type: string
+          example: /des/Aerocool_VX_PLUS_500W.json
+          description: Ссылка на характеристики товара
+        price:
+          type: integer
+          format: int64
+          example: 2290
+          description: Цена товара
+        number_of_available: 
+          type : integer
+          format: int32
+          example: 20
+          description: Количество доступных товаров на складе
+  
+    
+    # Ошибки
+    Error:
+      type: object
+      required: 
+        - code
+        - name
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    
+    # Категория
+    Category:
+      type: object
+      required:
+        - title
+        - image
+      properties:
+        category_id:
+            type: integer
+            format: int64
+            example: 10
+        title: 
+            type: string
+            example: Процессоры
+            description: Название категории
+        image: 
+            type: string
+            example: /img/cat/Процессоры.png
+            description: Ссылка на изображение категории
+          
+    # Категории
+    Categories:
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
+    
+    # Цена мин макс
+    Price:
+      type: object
+      required:
+        - min
+        - max
+      properties:
+        min:
+          type: integer
+          format: int64
+          example: 10000
+          description: Минимальная цена товара в данной категории
+        max:
+          type: integer
+          format: int64
+          example: 50000
+          description: Максимальная цена товара в данной категории
+      
+    
+    # Производитель
+    Manufacturer:
+      type: object
+      required:
+        - title
+        - manufacturer_id
+      properties:
+        manufacturer_id:
+            type: integer
+            format: int64
+            example: 5
+        title: 
+            type: string
+            example: Acer
+            description: Название производителя
+            
+    # Производители
+    Manufacturers:
+      type: array
+      items:
+        $ref: "#/components/schemas/Manufacturer"
+      
+            
+      
+        
+      
+    
