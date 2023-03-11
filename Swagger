@@ -6,8 +6,8 @@ info:
     TechnikaIT Server основан на OpenAPI 3.0 спецификации. 
 
     Полезные ссылки:
-    - [Репозиторий](https://github.com)
-    - [Исходное определение API для TechnikaIT](https://github.com/)
+    - [Репозиторий](https://github.com/KonstantinFisun/TechITSwagger)
+  #  - [Исходное определение API для TechnikaIT](https://github.com/)
   version: 1.0.11
 servers:
   - url: https://localhost:8000/swagger.io/api/v1
@@ -89,6 +89,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+                
+  /products/{product_id}/images:
+    get:
+      summary: Метод получения ссылок на дополнительные изображения товара
+      tags:
+        - Товар
+      operationId: getImagesProductById
+      parameters: 
+        - name: product_id
+          in: path
+          required: true
+          description: ID товара
+          schema:
+            type: string
+          example: 15
+      responses:
+        '200':
+          description: Успешный ответ со списком дополнительных изображений товара
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Images'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
   /categories/{category_id}:  
     get:
       summary: Метод получения списка товаров заданной категории
@@ -335,7 +364,27 @@ components:
       items:
         $ref: "#/components/schemas/Manufacturer"
       
-            
+  # Изображение
+    Image:
+      type: object
+      required:
+        - url
+        - alt
+      properties:
+        url:
+          type: string
+          example: /img/rider/Aerocool_VX_PLUS_500W_1.png
+          description: Ссылка на изображение категории
+        alt:
+          type: string
+          example: вид сбоку
+    
+    # Изображения
+    Images:
+      type: array
+      items:
+        $ref: "#/components/schemas/Image"
+          
       
         
       
