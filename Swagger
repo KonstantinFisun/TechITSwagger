@@ -200,6 +200,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+                
+  /orders:
+    get:
+      summary: Метод получения списка заказов
+      tags:
+        - Список заказов
+      operationId: getOrderList
+      responses:
+        '200':
+          description: Успешный ответ со списком заказов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orders'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     
               
 components:
@@ -384,8 +404,47 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Image"
-          
-      
         
-      
-    
+  # Заказ
+    Order:
+      type: object
+      required:
+        - order_id
+        - login
+        - order_composition
+        - order_price
+        - status
+        - date_of_formation
+      properties:
+        order_id:
+          type: integer
+          format: int64
+          example: 2
+        login:
+          type: string
+          example: yourBestFriend
+          description: Логин клиента
+        order_composition:
+          type: string
+          example: Aerocool VX PLUS 500W; ASUS VivoBook PRO 15
+          description: Содержимое заказа
+        order_price:
+          type: integer
+          format: int64
+          example: 15000
+          description: Общая цена заказа
+        status:
+          type: string
+          example: В ожидании...
+          description: Статус заказа
+        date_of_formation:
+          type: string
+          example: 12.02.23
+          description: Дата изменения статуса заказа
+          
+    # Список заказов
+    Orders:
+      type: array
+      items: 
+        $ref: "#/components/schemas/Order"
+  
