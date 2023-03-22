@@ -220,6 +220,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+                
+                
+  /status/{status_id}/orders:
+    get:
+      summary: Метод получения списка заказов заданного статуса
+      tags:
+        - Список заказов
+      operationId: getOrderListByStatus
+      parameters: 
+        - name: status_id
+          in: path
+          required: true
+          description: ID статуса
+          schema:
+            type: integer
+          example: 2
+      responses:
+        '200':
+          description: Успешный ответ со списком заказов заданного статуса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersByStatus'
+        'default':
+          description: Что-то пошло не так
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
     
               
 components:
@@ -447,4 +476,36 @@ components:
       type: array
       items: 
         $ref: "#/components/schemas/Order"
-  
+        
+    # Статус    
+    Status:
+      type: object
+      required:
+        - status_id
+        - title
+        - date_of_formation
+      properties:
+        status_id:
+          type: integer
+          format: int64
+          example: 1
+        title:
+          type: string
+          example: В ожидании...
+          description: Статус
+        date_of_formation:
+          type: string
+          example: 12.02.23
+          description: Дата изменения статуса
+          
+   # Список заказов определенного статуса       
+    OrdersByStatus:
+      type: object
+      required:
+        - status
+        - orders
+      properties:
+        status:
+          $ref: "#/components/schemas/Status"
+        orders:
+          $ref: "#/components/schemas/Orders"
